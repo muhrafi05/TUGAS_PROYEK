@@ -411,7 +411,6 @@ public:
             t = t->next;
         } 
         f.close();
-        // cout << "[SYSTEM] Data Transaksi disimpan.\n"; 
     }
     
     void load() {
@@ -442,7 +441,162 @@ public:
 };
 
 // ==========================================
-// 4. ALGORITMA: BST & HUFFMAN
+// 4. FITUR BARU: PRIORITY QUEUE (ANTRIAN BERPRIORITAS)
+// ==========================================
+struct NodePriority {
+    string nama;
+    int tingkatPrioritas; // 1 = VVIP, 2 = VIP, 3 = Biasa
+    NodePriority *next;
+};
+
+class PriorityQueue {
+private:
+    NodePriority *head;
+
+public:
+    PriorityQueue() { head = NULL; }
+
+    // Enqueue berdasarkan prioritas (semakin kecil angkanya, semakin tinggi prioritasnya)
+    void enqueue(string n, int p) {
+        NodePriority *temp = new NodePriority;
+        temp->nama = n;
+        temp->tingkatPrioritas = p;
+        temp->next = NULL;
+
+        // Jika antrian kosong atau prioritas lebih tinggi dari head
+        if (head == NULL || p < head->tingkatPrioritas) {
+            temp->next = head;
+            head = temp;
+        } else {
+            // Cari posisi yang tepat
+            NodePriority *curr = head;
+            while (curr->next != NULL && curr->next->tingkatPrioritas <= p) {
+                curr = curr->next;
+            }
+            temp->next = curr->next;
+            curr->next = temp;
+        }
+        cout << "[PRIORITY] " << n << " ditambahkan ke antrian dengan prioritas " << p << ".\n";
+    }
+
+    void dequeue() {
+        if (head == NULL) {
+            cout << "[PRIORITY] Antrian kosong.\n";
+        } else {
+            NodePriority *temp = head;
+            cout << "[PRIORITY] Memanggil: " << temp->nama << " (Prio: " << temp->tingkatPrioritas << ")\n";
+            head = head->next;
+            delete temp;
+        }
+    }
+
+    void display() {
+        if (head == NULL) {
+            cout << "[PRIORITY] Antrian kosong.\n";
+        } else {
+            NodePriority *ptr = head;
+            cout << "\n=== DAFTAR ANTRIAN PRIORITAS ===\n";
+            while (ptr != NULL) {
+                cout << "Nama: " << ptr->nama << " | Level: " << ptr->tingkatPrioritas << "\n";
+                ptr = ptr->next;
+            }
+        }
+    }
+};
+PriorityQueue antrianPrioritas;
+
+// ==========================================
+// 5. FITUR BARU: LIST PROMO (DOUBLY LINKED LIST)
+// ==========================================
+struct PromoData {
+    string namaPromo;
+    int potongan;
+    string kodePromo;
+};
+
+struct NodePromo {
+    PromoData data;
+    NodePromo *next;
+    NodePromo *prev;
+};
+
+class PromoList {
+private:
+    NodePromo *head;
+    NodePromo *tail;
+    NodePromo *current; // Untuk navigasi saat view
+
+public:
+    PromoList() {
+        head = NULL;
+        tail = NULL;
+        current = NULL;
+        // Inisialisasi Promo Awal
+        tambahPromo("DISKON MERDEKA", 17000, "MERDEKA17");
+        tambahPromo("SUPER HEMAT", 50000, "HEMAT50");
+        tambahPromo("AKHIR TAHUN", 100000, "YEAR END");
+        current = head;
+    }
+
+    void tambahPromo(string nama, int pot, string kode) {
+        NodePromo *baru = new NodePromo;
+        baru->data.namaPromo = nama;
+        baru->data.potongan = pot;
+        baru->data.kodePromo = kode;
+        baru->next = NULL;
+        baru->prev = NULL;
+
+        if (head == NULL) {
+            head = tail = baru;
+        } else {
+            tail->next = baru;
+            baru->prev = tail;
+            tail = baru;
+        }
+        // cout << "[PROMO] Promo " << nama << " ditambahkan.\n";
+    }
+
+    // Fitur Navigasi Doubly Linked List (Next/Prev)
+    void lihatPromo() {
+        if (head == NULL) {
+            cout << "Tidak ada promo aktif.\n";
+            return;
+        }
+
+        if (current == NULL) current = head;
+
+        char pilihan;
+        do {
+            cout << "\n--------------------------------\n";
+            cout << "        PROMO SAAT INI          \n";
+            cout << "--------------------------------\n";
+            cout << "Nama     : " << current->data.namaPromo << endl;
+            cout << "Potongan : Rp " << current->data.potongan << endl;
+            cout << "Kode     : " << current->data.kodePromo << endl;
+            cout << "--------------------------------\n";
+            cout << "[N] Next Promo  |  [P] Previous Promo  |  [X] Keluar\n";
+            cout << "Pilihan: "; cin >> pilihan;
+
+            if (pilihan == 'n' || pilihan == 'N') {
+                if (current->next != NULL) {
+                    current = current->next;
+                } else {
+                    cout << ">> Ini adalah promo terakhir.\n";
+                }
+            } else if (pilihan == 'p' || pilihan == 'P') {
+                if (current->prev != NULL) {
+                    current = current->prev;
+                } else {
+                    cout << ">> Ini adalah promo pertama.\n";
+                }
+            }
+        } while (pilihan != 'x' && pilihan != 'X');
+    }
+};
+PromoList daftarPromo;
+
+// ==========================================
+// 6. ALGORITMA: BST & HUFFMAN
 // ==========================================
 
 // BST (Binary Search Tree) - Analisis Harga
