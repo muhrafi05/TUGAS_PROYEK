@@ -3,8 +3,6 @@
 
 #include "ktp.h"
 
-// Node menggunakan struct dari ktp.h
-
 class QueueKTP {
 private:
     Node* front;
