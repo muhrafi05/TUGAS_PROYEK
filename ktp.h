@@ -16,17 +16,17 @@ inline string ambilField(string baris, int index) {
     string hasil = "";
     int hitungSeparator = 0;
     
-    // Loop character by character
+    // Loop character by character untuk memecah string
     for (int i = 0; i < (int)baris.length(); i++) {
         char c = baris[i];
         if (c == '|') {
             hitungSeparator++;
-            // Jika sudah melewati index yang dicari, berhenti
+            // Jika sudah melewati index yang dicari, berhenti loop
             if (hitungSeparator > index) {
                 break;
             }
         } else {
-            // Jika counter separator sesuai dengan index target, simpan char
+            // Jika counter separator sesuai dengan index target, simpan char ke hasil
             if (hitungSeparator == index) {
                 hasil += c;
             }
@@ -36,7 +36,7 @@ inline string ambilField(string baris, int index) {
 }
 
 // ==========================================
-// STRUKTUR DATA KTP (VERSI LENGKAP)
+// STRUKTUR DATA KTP (VERSI LENGKAP & DETAIL)
 // ==========================================
 struct Tanggal {
     int hari;
@@ -94,7 +94,7 @@ inline string teksBerlaku(int b) {
     }
 }
 
-// Operator Overloading agar output KTP rapi dan panjang
+// Operator Overloading agar output KTP rapi dan panjang saat dicetak
 inline ostream& operator<<(ostream& os, const KTP& k) {
     os << "\n==============================================";
     os << "\n              DATA KEPENDUDUKAN               ";
@@ -129,7 +129,7 @@ KTP buatKTPBaru() {
     cout << "################################################\n";
     
     cout << "1.  NIK (Nomor Induk Kependudukan) : "; cin >> k.nik;
-    cin.ignore(10000, '\n'); // Bersihkan buffer
+    cin.ignore(10000, '\n'); // Bersihkan buffer input agar getline aman
     
     cout << "2.  Nama Lengkap                   : "; getline(cin, k.nama);
     cout << "3.  Tempat Lahir                   : "; getline(cin, k.tempat_lahir);
@@ -169,7 +169,7 @@ KTP buatKTPBaru() {
     
     cout << "16. Masa Berlaku (1.Smt 2.5Th 3.Tetap): "; cin >> k.berlaku_hingga;
 
-    cout << "\n[INFO] Data KTP berhasil direkam ke sistem memori.\n";
+    cout << "\n[INFO] Data KTP berhasil direkam ke sistem memori sementara.\n";
     return k;
 }
 
