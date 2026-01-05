@@ -16,6 +16,7 @@ public:
         return head == NULL;
     }
 
+    // Insert data user baru ke linked list
     void insert(KTP x) {
         Node* baru = new Node;
         baru->data = x;
@@ -39,7 +40,7 @@ public:
         ofstream file("users.txt");
         Node* t = head;
         while (t != NULL) {
-            // Urutan Penyimpanan (Delimiter Pipe '|')
+            // Menyimpan dengan format Delimiter Pipe '|' agar mudah diparsing
             file << t->data.nik << "|"
                  << t->data.nama << "|"
                  << t->data.tempat_lahir << "|"
@@ -63,6 +64,7 @@ public:
             t = t->next;
         }
         file.close();
+        // cout << "[SYSTEM] Data User berhasil disimpan.\n";
     }
 
     // ==========================================
@@ -77,7 +79,7 @@ public:
             if (baris.empty()) continue;
             
             KTP k;
-            // Blok try-catch untuk mencegah crash jika data korup
+            // Blok try-catch untuk mencegah crash jika data di file korup/tidak sesuai format
             try {
                 k.nik = stoll(ambilField(baris, 0));
                 k.nama = ambilField(baris, 1);
@@ -99,16 +101,17 @@ public:
                 k.berlaku_hingga = stoi(ambilField(baris, 17));
                 k.umur = stoi(ambilField(baris, 18));
             } catch (...) {
-                // Jika error parsing, lewati baris ini
+                // Jika error parsing, lewati baris ini dan lanjut ke baris berikutnya
                 continue; 
             }
 
             insert(k);
         }
         file.close();
-        cout << "[SYSTEM] Database Penduduk berhasil dimuat.\n";
+        cout << "[SYSTEM] Database Penduduk berhasil dimuat ke dalam sistem.\n";
     }
 
+    // Fungsi Login: Mencari user berdasarkan NIK
     KTP* loginByNIK(long long nikTarget) {
         Node* temp = head;
         while (temp != NULL) {
