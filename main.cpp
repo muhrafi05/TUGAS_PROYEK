@@ -20,7 +20,8 @@ void menuUser(KTP* user) {
         cout << "============================================\n";
         cout << "1. Lihat Profil Lengkap Saya (E-KTP)\n";
         cout << "2. Sewa Mobil Baru\n";
-        cout << "3. Ajukan Refund / Keluhan\n";
+        cout << "3. Lihat Promo Mobil (Double Linked List)\n";
+        cout << "4. Ajukan Refund / Keluhan\n";
         cout << "0. Logout / Keluar Akun\n";
         cout << "============================================\n";
         cout << "Masukkan Pilihan Anda: "; 
@@ -49,6 +50,11 @@ void menuUser(KTP* user) {
             appLog.log("Transaksi Sewa Mobil oleh User: " + user->nama);
         } 
         else if (p == 3) {
+            // Memanggil fitur Promo Double Linked List
+            daftarPromo.lihatPromo();
+            appLog.log("User melihat daftar promo.");
+        }
+        else if (p == 4) {
             string a; 
             cout << "Silakan tulis alasan Refund/Keluhan secara detail: "; 
             getline(cin, a);
@@ -81,8 +87,9 @@ void menuAdmin() {
         cout << "3. Analisis Harga Sewa (BST Sorting)\n";
         cout << "4. Analisis Nama Pelanggan (Huffman Freq)\n";
         cout << "5. Proses Antrian Refund (FIFO)\n";
-        cout << "6. Hapus Transaksi Terakhir (Soft Delete)\n";
-        cout << "7. Restore Transaksi dari Sampah (Undo)\n";
+        cout << "6. Kelola Antrian Prioritas (Priority Queue)\n";
+        cout << "7. Hapus Transaksi Terakhir (Soft Delete)\n";
+        cout << "8. Restore Transaksi dari Sampah (Undo)\n";
         cout << "0. Kembali ke Menu Utama\n";
         cout << "############################################\n";
         cout << "Pilih Menu Admin: "; 
@@ -106,14 +113,31 @@ void menuAdmin() {
         else if(p == 5) {
             antrianRefund.proses();
         }
-        else if(p == 6) { 
-            dbTrans.delLast(); 
-            // Update file fisik setelah penghapusan
-            dbTrans.save(); 
+        else if(p == 6) {
+            int sub;
+            cout << "\n--- KELOLA ANTRIAN PRIORITAS ---\n";
+            cout << "1. Tambah Pelanggan Prioritas\n";
+            cout << "2. Panggil Pelanggan (Dequeue)\n";
+            cout << "3. Lihat Daftar Antrian\n";
+            cout << "Pilih: "; cin >> sub;
+            
+            if (sub == 1) {
+                string nm; int lvl;
+                cout << "Nama Pelanggan: "; cin >> nm;
+                cout << "Level Prioritas (1.VVIP 2.VIP 3.Biasa): "; cin >> lvl;
+                antrianPrioritas.enqueue(nm, lvl);
+            } else if (sub == 2) {
+                antrianPrioritas.dequeue();
+            } else if (sub == 3) {
+                antrianPrioritas.display();
+            }
         }
         else if(p == 7) { 
+            dbTrans.delLast(); 
+            dbTrans.save(); 
+        }
+        else if(p == 8) { 
             dbTrans.restore(); 
-            // Update file fisik setelah restore
             dbTrans.save(); 
         }
         else if(p == 0) {
@@ -139,7 +163,7 @@ int main() {
     KTP admin; 
     admin.nik = 12345; 
     admin.nama = "SUPER ADMIN";
-    dbUser.insert(admin); // Hanya insert ke RAM, tidak perlu save ke file user biasa
+    dbUser.insert(admin); // Hanya insert ke RAM
 
     int p;
     while(true) {
@@ -156,11 +180,8 @@ int main() {
         bersihkanBufferInput();
 
         if (p == 1) {
-            // Proses 1: Input Data
             KTP k = buatKTPBaru();
-            // Proses 2: Masukkan ke Linked List
             dbUser.insert(k);
-            // Proses 3: Simpan ke File (Auto Save)
             dbUser.simpanDataKeFile();
         } 
         else if (p == 2) {
@@ -168,15 +189,12 @@ int main() {
             cout << "\nMasukkan NIK Terdaftar Anda: "; 
             cin >> nik;
             
-            // Pencarian User di Database
             KTP* u = dbUser.loginByNIK(nik);
             
             if (u != NULL) {
-                // Login Sukses
                 cout << "Login Berhasil! Mengalihkan...";
                 menuUser(u);
             } else {
-                // Login Gagal
                 cout << "[ERROR] NIK tidak ditemukan dalam database penduduk.\n";
                 cout << "Silakan Registrasi (Menu 1) terlebih dahulu.\n";
             }
